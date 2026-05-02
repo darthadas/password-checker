@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Password Checker</title>
+        <style>
+            button {
+                border-radius: 6px;
+                transition: background 0.2s;
+            }
+            button:hover {
+                background: #45a049;
+            }
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 500px;
+                margin: 60px auto;
+                background: #f5f5f5
+            }
+            h1 { color: #333; }
+            input {
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+                margin: 10px 0;
+            }
+            button {
+                padding: 10px 20px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            #result {
+                white-space: pre-line;  /* fixes line breaks showing as one block */
+                padding: 15px;
+                border-radius: 6px;
+                background: white;
+            }
+            input[type="password"], input[type="number"] {
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                box-sizing: border-box;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>🔐 Password Checker</h1>
+        <input type="password" id="passwordInput" oninput = "checkPassword()" placeholder="Enter your password">
+        <button onclick="checkPassword()">Check</button>
+        <button id="copyBtn" onclick="copyPassword()">Copy</button>
+        <input type="number" id="passwordLength" min="8" value="8" placeholder="Enter the password length you want.">
+        <button onclick="generatePassword()">Generate Password</button>
+        <div id="result"></div>
+        <div id="scoreBar" style="height:10px; border-radius:5px; margin-top:10px; width:0%; transition: width 0.3s;"></div>
+
+        <script>
+            function generatePassword() {
+                let length = document.getElementById("passwordLength").value;;
+                let upper_characters = [];
+                let lower_characters = [];
+                let digit_characters = [];
+                let special_characters = [];
+
+                const lower_alphabet = "abcdefghijklmnopqrstuvwxyz";
+                const upper_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                const specials = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+                for (let i = 0; i < length/4; i++) {
+                    upper_characters.push(upper_alphabet[Math.floor(Math.random() * upper_alphabet.length)]);
+                    lower_characters.push(lower_alphabet[Math.floor(Math.random() * lower_alphabet.length)]);
+                    digit_characters.push(Math.floor(Math.random() * 10));
+                    special_characters.push(specials[Math.floor(Math.random() * specials.length)]);
+                }
+
+                let leftover_length = length % 4;
+
+                for (let i = 0; i < leftover_length; i++){
+                    let r = Math.floor(Math.random() * 4);
+                    if (r == 0) {
+                        upper_characters.push(upper_alphabet[Math.floor(Math.random() * upper_alphabet.length)]);
+                    } else if (r == 1) {
+                        lower_characters.push(lower_alphabet[Math.floor(Math.random() * lower_alphabet.length)]);
+                    } else if (r == 2) {
+                        digit_characters.push(Math.floor(Math.random() * 10));
+                    } else {
+                        special_characters.push(specials[Math.floor(Math.random() * specials.length)]);
+                    }
+                }
+
+                let password_char_list = [...upper_characters, ...lower_characters, ...digit_characters, ...special_characters];
+                for (let i = password_char_list.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i+1));
+                    [password_char_list[i], password_char_list[j]] = [password_char_list[j], password_char_list[i]];
+                }
+                let custom_password = password_char_list.join("");
+
+                document.getElementById("passwordInput").value = custom_password;
+                checkPassword();
+
+            }
+
+            function checkPassword() {
+                const password = document.getElementById("passwordInput").value;
+                let score = 0;
+                let feedback = [];
+                const colors = { "Strong 💪": "green", "Medium ⚠️": "orange", "Weak ❌": "red" };
+
+                if (password.length >= 8) score++;
+                else feedback.push("Use at least 8 characters");
+
+                if (/[A-Z]/.test(password)) score++;
+                else feedback.push("Add an uppercase letter");
+
+                if (/[a-z]/.test(password)) score++;
+                else feedback.push("Add an lowercase letter");
+
+                if (/[0-9]/.test(password)) score++;
+                else feedback.push("Add a number");
+
+                if (/[^0-9A-Za-z]/.test(password)) score++;
+                else feedback.push("Add a special character");
+
+                let rating = score === 5 ? "Strong 💪" : score >= 3 ? "Medium ⚠️" : "Weak ❌";
+
+                let output = `Score: ${score}/5 — ${rating}\n`;
+                feedback.forEach(tip => output += `→ ${tip}\n`);
+
+                const barColors = {"Strong 💪":"green", "Medium ⚠️":"orange", "Weak ❌":"red"};
+                const bar = document.getElementById("scoreBar");
+                bar.style.width = (score * 20) + "%";
+                bar.style.background = barColors[rating];
+
+                document.getElementById("result").innerText = output;
+                document.getElementById("result").style.color = colors[rating];
+            }
+            function copyPassword() {
+                const pwd = document.getElementById("passwordInput").value;
+                navigator.clipboard.writeText(pwd);
+                document.getElementById("copyBtn").innerText = "Copied ✅";
+                setTimeout(() => document.getElementById("copyBtn").innerText = "Copy", 2000);
+            }
+        </script>
+    </body>
+</html>
