@@ -50,14 +50,22 @@
     </head>
     <body>
         <h1>🔐 Password Checker</h1>
-        <div style="max-width:500px; margin: 0 auto 24px;
-            color:#666; font-size:0.9rem; line-height:1.7;">
-          <p>A strong password is your first line of defence
-          against unauthorised access. This tool checks your
-          password against five security criteria instantly —
-          no data is sent to any server. Everything runs in
-          your browser. Use the generator to create a secure
-          password if you need one.</p>
+        <div style="
+          max-width: 500px;
+          margin: 0 auto 32px;
+          background: #f0f7f0;
+          border-radius: 8px;
+          padding: 16px 20px;
+          font-size: 0.9rem;
+          color: #555;
+          line-height: 1.7;
+          border-left: 3px solid #4CAF50;
+        ">
+          A strong password is your first line of defence against 
+          unauthorised access. This tool checks your password against 
+          five security criteria instantly — no data is sent to any 
+          server. Everything runs in your browser. Use the generator 
+          to create a secure password if you need one.
         </div>
         <input type="password" id="passwordInput" oninput = "checkPassword()" placeholder="Enter your password">
         <button onclick="checkPassword()">Check</button>
